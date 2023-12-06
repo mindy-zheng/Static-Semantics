@@ -2,9 +2,9 @@ CPP = g++
 
 CPP_FLAGS = -std=c++11 -Wall
 
-TARGET = P2 
+TARGET = P3 
 
-CPP_FILES = main.cpp scanner.cpp parser.cpp testTree.cpp
+CPP_FILES = main.cpp scanner.cpp parser.cpp testTree.cpp staticSemantics.cpp
 
 OBJ = $(CPP_FILES:.cpp=.o) 
 

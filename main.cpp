@@ -4,7 +4,8 @@
 #include "token.h"
 #include "scanner.h"
 #include "testTree.h" 
-#include "parser.h"  
+#include "parser.h" 
+#include "staticSemantics.h"  
 
 using namespace std; 
 
@@ -34,9 +35,13 @@ int main(int argc, char *argv[]) {
 		} 
 	} 
 
+	find_stack id_stack; 
 	// Parser:
 	node *root = parser(*input_stream); 
-	traversePreorder(root, 0); 
+	//traversePreorder(root, 0);
+	cout << "Calling Static Semantics... " << endl;  
+	staticSemantics(root, id_stack);
+	cout << "Static Semantics finished!" << endl;
 	
 	
 	if (inFile.is_open()) { 

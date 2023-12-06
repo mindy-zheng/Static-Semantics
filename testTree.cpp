@@ -1,6 +1,7 @@
 #include "token.h"
 #include "testTree.h"
 #include "parser.h"  
+#include "staticSemantics.h"
 #include <iostream> 
 #include <string> 
 
@@ -74,4 +75,56 @@ typedef struct Token {
         string tokenInstance;
         int lineNumber;
 } Token;
-*/ 
+*/
+
+void staticSemantics(node *n, find_stack& id_stack) { 
+	//cout << "Entering staticSemantics" << endl; 
+	if (n != nullptr) {
+		if (n-> label == block_node) {
+			int var_count = 0; 
+		
+			preorder(n, var_count, id_stack);
+		 
+			for (int i = 0; i < var_count; i++) { 
+				id_stack.pop(); 
+			} 
+		} else {
+			int var_count = 0; 
+			preorder(n, var_count, id_stack); 
+		}
+	}
+	//cout << "Exiting static semantics" << endl; 
+}
+
+void preorder(node *n, int& var_count, find_stack& id_stack) { 
+	//cout << "Entering preorder" << endl; 
+	if (n != nullptr) {
+		verifyNode(n, var_count, id_stack); 
+	
+		staticSemantics(n->c1, id_stack); 
+		staticSemantics(n->c2, id_stack);
+		staticSemantics(n->c3, id_stack);
+ 		staticSemantics(n->c4, id_stack);
+	}
+	//cout << "Exiting preorder" << endl; 
+} 
+
+void verifyNode(node *n, int &var_count, find_stack& id_stack) { 
+	//cout << "Entering verifyNode" << endl; 
+	if (n-> label == varList_node) { 
+		if (n-> token1.tokenType == IDENTIFIER_TOKEN) { 
+			if (var_count > 0) { 
+				id_stack.find(n-> token1, 1); 
+			} 
+
+			id_stack.push(n->token1); 
+			var_count++; 
+		}
+	} 
+	else if (n-> label == R_node || n-> label == in_node || n-> label == assign_node || n-> label == assign_node || n-> label == exp_node || n->label == M_node || n-> label == N_node) {
+		if (n-> token1.tokenType == IDENTIFIER_TOKEN) { 
+			id_stack.find(n-> token1, 2); 
+		} 
+	}
+	//cout << "Exiting verifyNode" << endl; 
+}
